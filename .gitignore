@@ -1,0 +1,10 @@
+checkpoint *.safetensors *.bin *.pt *. pth
+data *.jsonl *.parquet 
+logs/
+outputs/
+wandb/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.env
+*.egg-info/
