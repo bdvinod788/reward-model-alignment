@@ -1,10 +1,26 @@
-checkpoint *.safetensors *.bin *.pt *. pth
-data *.jsonl *.parquet 
+# Model weights and checkpoints
+checkpoint/
+checkpoints/
+*.safetensors
+*.bin
+*.pt
+*.pth
+
+# Data
+data/
+*.jsonl
+*.parquet
+
+# Logs and outputs
 logs/
 outputs/
 wandb/
+
+# Python
 __pycache__/
 *.pyc
 .ipynb_checkpoints/
+
+# Environment
 .env
 *.egg-info/
