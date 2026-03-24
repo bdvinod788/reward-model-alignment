@@ -6,7 +6,7 @@
 #SBATCH --gpus-per-task=a100:1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=64GB
-#SBATCH --time=8:00:00
+#SBATCH --time=12:00:00
 #SBATCH --job-name=reward-model-train
 #SBATCH --output=/project2/jonmay_1426/bandrede/reward-model/logs/%j.out
 #SBATCH --error=/project2/jonmay_1426/bandrede/reward-model/logs/%j.err
@@ -17,5 +17,10 @@ module purge
 eval "$(conda shell.bash hook)"
 conda activate /scratch1/bandrede/envs/reward-model
 
-cd /project2/jonmay_1426/bandrede/reward-model
-python src/train.py
+export HF_HOME=/scratch1/bandrede/hf_cache
+export HF_DATASETS_CACHE=/scratch1/bandrede/datasets
+export RM_PROJECT=/project2/jonmay_1426/bandrede/reward-model
+
+cd $RM_PROJECT
+echo "Output dir: $RM_PROJECT/checkpoint"
+python src/train.py --output $RM_PROJECT/checkpoint
