@@ -5,6 +5,7 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from trl import RewardTrainer, RewardConfig
 from datasets import load_dataset
 
+
 parser = argparse.ArgumentParser(description = 'Run Training')
 parser.add_argument('--model', type=str, default='google/gemma-2b-it')
 parser.add_argument('--dataset', type=str, default='hh')
@@ -12,6 +13,7 @@ parser.add_argument('--epochs', type=int, default=1)
 parser.add_argument('--batch_size', type=int, default=4)
 parser.add_argument('--learning_rate', type=float, default=1e-5)
 parser.add_argument('--output', type=str, default=os.path.join(os.environ.get("RM_PROJECT", "."), "checkpoint"))
+parser.add_argument('--resume', type=str, default=None)
 
 args = parser.parse_args()
 
@@ -68,4 +70,10 @@ trainer = RewardTrainer(
     processing_class = tokenizer
 )
 
-trainer.train()
+if args.resume:
+    import numpy as np
+    import torch.serialization
+    torch.serialization.add_safe_globals([np.core.multiarray._reconstruct, np.ndarray, np.dtype, np.dtypes.UInt32DType])
+    trainer.train(resume_from_checkpoint = args.resume)
+else:
+    trainer.train()
