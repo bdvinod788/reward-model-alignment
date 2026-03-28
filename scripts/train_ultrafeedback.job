@@ -1,0 +1,35 @@
+#!/bin/bash
+#SBATCH --account=jonmay_1426
+#SBATCH --partition=gpu
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gpus-per-task=a100:1
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=64GB
+#SBATCH --time=10:00:00
+#SBATCH --job-name=rm-ultrafeedback
+#SBATCH --output=/project2/jonmay_1426/bandrede/reward-model/logs/%j.out
+#SBATCH --error=/project2/jonmay_1426/bandrede/reward-model/logs/%j.err
+#SBATCH --mail-type=BEGIN,END,FAIL
+#SBATCH --mail-user=bdvinod788@gmail.com
+
+module purge
+module load conda
+source activate /scratch1/bandrede/envs/reward-model
+
+export HF_HOME=/scratch1/bandrede/hf_cache
+export HF_DATASETS_CACHE=/scratch1/bandrede/datasets
+export RM_PROJECT=/project2/jonmay_1426/bandrede/reward-model
+
+cd $RM_PROJECT
+echo "Output dir: $RM_PROJECT/checkpoint"
+
+LATEST=$(ls -d $RM_PROJECT/checkpoint_ultrafeedback/checkpoint-* 2>/dev/null | sort -V | tail -1)
+if [ -z "$LATEST" ]; then
+    echo "Starting from scratch"
+    python src/train_ablation.py --output $RM_PROJECT/checkpoint --dataset ultrafeedback
+else
+    echo "Resuming from $LATEST"
+    python src/train_ablation.py --output $RM_PROJECT/checkpoint --dataset ultrafeedback --resume $LATEST
+fi
+
