@@ -36,22 +36,24 @@ model.config.pad_token_id = tokenizer.eos_token_id
 
 
 def load_data(dataset_name):
-    return (
-        load_dataset("Anthropic/hh-rlhf", split="train")
-        if dataset_name == "hh"
-        else (
-            load_dataset("HuggingFaceH4/ultrafeedback_binarized", split="train_prefs")
-            if dataset_name == "ultrafeedback"
-            else concatenate_datasets(
-                [
-                    load_dataset("Anthropic/hh-rlhf", split="train"),
-                    load_dataset(
-                        "HuggingFaceH4/ultrafeedback_binarized", split="train_prefs"
-                    ),
-                ]
-            )
-        )
-    )
+    if dataset_name == "hh":
+        return load_dataset("Anthropic/hh-rlhf", split="train")
+    elif dataset_name == "ultrafeedback":
+        return load_dataset("HuggingFaceH4/ultrafeedback_binarized", split="train_prefs")
+    else:
+        hh = load_dataset("Anthropic/hh-rlhf", split="train")
+        uf = load_dataset("HuggingFaceH4/ultrafeedback_binarized", split="train_prefs")
+        
+        def flatten_uf(sample):
+            return {
+                "chosen": sample["prompt"] + sample["chosen"][-1]["content"],
+                "rejected": sample["prompt"] + sample["rejected"][-1]["content"]
+            }
+        
+        uf = uf.map(flatten_uf).select_columns(["chosen", "rejected"])
+        
+        return concatenate_datasets([hh, uf])
+        
 
 
 def format_dataset(sample):
