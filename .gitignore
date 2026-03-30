@@ -1,6 +1,5 @@
 # Model weights and checkpoints
-checkpoint/
-checkpoints/
+checkpoint_*/
 *.safetensors
 *.bin
 *.pt
