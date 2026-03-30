@@ -1,4 +1,6 @@
 import os
+os.environ["WANDB_MODE"] = "offline"
+
 import argparse
 import torch
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
@@ -106,7 +108,7 @@ config = RewardConfig(
     eval_strategy="steps",
     eval_steps=500,
     save_steps=500,
-    report_to="wandb",
+    report_to="none",
     run_name=run_name,
 )
 
@@ -124,7 +126,7 @@ if args.resume:
     import torch.serialization
 
     torch.serialization.add_safe_globals(
-        [np.core.multiarray._reconstruct, np.ndarray, np.dtype]
+        [np.core.multiarray._reconstruct, np.ndarray, np.dtype, np.dtypes.UInt32DType]
     )
     trainer.train(resume_from_checkpoint=args.resume)
 else:

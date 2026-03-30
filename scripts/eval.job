@@ -3,10 +3,10 @@
 #SBATCH --partition=gpu
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --gpus-per-task=a100:1
+#SBATCH --gpus-per-task=1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=64GB
-#SBATCH --time=2:00:00
+#SBATCH --time=00:30:00
 #SBATCH --job-name=rewardbench-eval
 #SBATCH --output=/project2/jonmay_1426/bandrede/reward-model/logs/%j.out
 #SBATCH --error=/project2/jonmay_1426/bandrede/reward-model/logs/%j.err
@@ -22,10 +22,11 @@ export HF_DATASETS_CACHE=/scratch1/bandrede/datasets
 export RM_PROJECT=/project2/jonmay_1426/bandrede/reward-model
 
 # Find latest checkpoint automatically
-LATEST=$(ls -d $RM_PROJECT/checkpoint/checkpoint-* 2>/dev/null | sort -V | tail -1)
+LATEST=$(ls -d $RM_PROJECT/checkpoint_mixed/checkpoint-* 2>/dev/null | sort -V | tail -1)
 echo "Evaluating checkpoint: $LATEST"
 
 rewardbench \
   --model $LATEST \
-  --batch_size 16 \
-  --output_dir $RM_PROJECT/outputs/rewardbench
+  --batch_size 8 \
+  --not_quantized \
+  --output_dir $RM_PROJECT/outputs/rewardbench_mixed
