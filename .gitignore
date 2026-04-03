@@ -1,5 +1,7 @@
 # Model weights and checkpoints
+checkpoint/
 checkpoint_*/
+*.swp
 *.safetensors
 *.bin
 *.pt
