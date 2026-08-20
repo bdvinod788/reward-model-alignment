@@ -27,9 +27,9 @@ echo "Output dir: $RM_PROJECT/checkpoint"
 LATEST=$(ls -d $RM_PROJECT/checkpoint_ultrafeedback/checkpoint-* 2>/dev/null | sort -V | tail -1)
 if [ -z "$LATEST" ]; then
     echo "Starting from scratch"
-    /scratch1/bandrede/envs/reward-model/bin//scratch1/bandrede/envs/reward-model/bin/python src/train_ablation.py --output $RM_PROJECT/checkpoint --dataset ultrafeedback
+    /scratch1/bandrede/envs/reward-model/bin/python src/train_ablation.py --output $RM_PROJECT/checkpoint --dataset ultrafeedback
 else
     echo "Resuming from $LATEST"
-    /scratch1/bandrede/envs/reward-model/bin//scratch1/bandrede/envs/reward-model/bin/python src/train_ablation.py --output $RM_PROJECT/checkpoint --dataset ultrafeedback --resume $LATEST
+    /scratch1/bandrede/envs/reward-model/bin/python src/train_ablation.py --output $RM_PROJECT/checkpoint --dataset ultrafeedback --resume $LATEST
 fi
 
