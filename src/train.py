@@ -8,7 +8,6 @@ from datasets import load_dataset
 
 parser = argparse.ArgumentParser(description = 'Run Training')
 parser.add_argument('--model', type=str, default='google/gemma-2b-it')
-parser.add_argument('--dataset', type=str, default='hh')
 parser.add_argument('--epochs', type=int, default=1)
 parser.add_argument('--batch_size', type=int, default=4)
 parser.add_argument('--learning_rate', type=float, default=1e-5)

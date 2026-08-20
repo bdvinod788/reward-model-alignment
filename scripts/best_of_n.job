@@ -24,6 +24,6 @@ export RM_PROJECT=/project2/jonmay_1426/bandrede/reward-model
 cd $RM_PROJECT
 echo "Output dir: $RM_PROJECT/checkpoint"
 
-/scratch1/bandrede/envs/reward-model/bin/python notebooks/best_of_n_generate.py \
+/scratch1/bandrede/envs/reward-model/bin/python src/best_of_n_generate.py \
   --rm_path $RM_PROJECT/checkpoint/checkpoint-36180 \
   --output $RM_PROJECT/outputs/best_of_n/results.json

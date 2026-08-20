@@ -21,8 +21,16 @@ export HF_HOME=/scratch1/bandrede/hf_cache
 export HF_DATASETS_CACHE=/scratch1/bandrede/datasets
 export RM_PROJECT=/project2/jonmay_1426/bandrede/reward-model
 
+DATASET=${DATASET:?Set DATASET to one of: hh, ultrafeedback, mixed (e.g. sbatch --export=DATASET=mixed eval.job)}
+
+if [ "$DATASET" = "hh" ]; then
+    CKPT_DIR=$RM_PROJECT/checkpoint
+else
+    CKPT_DIR=$RM_PROJECT/checkpoint_${DATASET}
+fi
+
 # Find latest checkpoint automatically
-LATEST=$(ls -d $RM_PROJECT/checkpoint_mixed/checkpoint-* 2>/dev/null | sort -V | tail -1)
+LATEST=$(ls -d $CKPT_DIR/checkpoint-* 2>/dev/null | sort -V | tail -1)
 echo "Evaluating checkpoint: $LATEST"
 
 rewardbench \

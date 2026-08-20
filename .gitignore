@@ -2,6 +2,7 @@
 checkpoint/
 checkpoint_*/
 *.swp
+*.swo
 *.safetensors
 *.bin
 *.pt
@@ -25,3 +26,7 @@ __pycache__/
 # Environment
 .env
 *.egg-info/
+
+# Documentation
+REPORT.md
+TECHNICAL_SUMMARY.md
