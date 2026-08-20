@@ -41,10 +41,19 @@ model.config.pad_token_id = tokenizer.eos_token_id
 
 def parse_hh_turns(text):
     turns = re.split(r"\n\n(Human|Assistant): ", text)[1:]
-    return [
+    raw_turns = [
         {"role": "user" if role == "Human" else "assistant", "content": content.strip()}
         for role, content in zip(turns[0::2], turns[1::2])
     ]
+
+    merged_turns = []
+    for turn in raw_turns:
+        if merged_turns and merged_turns[-1]["role"] == turn["role"]:
+            merged_turns[-1]["content"] += "\n\n" + turn["content"]
+        else:
+            merged_turns.append(turn)
+
+    return merged_turns
 
 
 def load_data(dataset_name):
