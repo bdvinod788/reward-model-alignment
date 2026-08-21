@@ -23,11 +23,7 @@ export RM_PROJECT=/scratch1/bandrede/reward-model
 
 DATASET=${DATASET:?Set DATASET to one of: hh, ultrafeedback, mixed (e.g. sbatch --export=DATASET=mixed eval.job)}
 
-if [ "$DATASET" = "hh" ]; then
-    CKPT_DIR=$RM_PROJECT/checkpoint
-else
-    CKPT_DIR=$RM_PROJECT/checkpoint_${DATASET}
-fi
+CKPT_DIR=$RM_PROJECT/checkpoint_${DATASET}
 
 # Find latest checkpoint automatically
 LATEST=$(ls -d $CKPT_DIR/checkpoint-* 2>/dev/null | sort -V | tail -1)
