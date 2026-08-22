@@ -22,8 +22,8 @@ export HF_DATASETS_CACHE=/scratch1/bandrede/datasets
 export RM_PROJECT=/scratch1/bandrede/reward-model
 
 cd $RM_PROJECT
-echo "Output dir: $RM_PROJECT/checkpoint"
+echo "Output dir: $RM_PROJECT/checkpoint_hh"
 
 /scratch1/bandrede/envs/reward-model/bin/python src/best_of_n_generate.py \
-  --rm_path $RM_PROJECT/checkpoint/checkpoint-36180 \
+  --rm_path $RM_PROJECT/checkpoint_hh/checkpoint-36180 \
   --output $RM_PROJECT/outputs/best_of_n/results.json
