@@ -36,6 +36,7 @@ gen_model.config.pad_token_id = gen_tokenizer.eos_token_id
 
 # Reward model and tokenizer
 rm_tokenizer = AutoTokenizer.from_pretrained(args.rm_path)
+rm_tokenizer.pad_token = rm_tokenizer.pad_token or rm_tokenizer.eos_token
 rm_model = AutoModelForSequenceClassification.from_pretrained(
     args.rm_path, num_labels=1, torch_dtype=torch.bfloat16, device_map="auto"
 )
@@ -56,6 +57,7 @@ prompts = [extract_prompt(sample) for sample in dataset]
 def generate_responses(prompt, n):
     inputs = gen_tokenizer(prompt, return_tensors="pt", truncation=True, max_length=512)
     inputs = {k: v.to(gen_model.device) for k, v in inputs.items()}
+    prompt_len = inputs["input_ids"].shape[-1]
     output_tokens = gen_model.generate(
         **inputs,
         max_new_tokens=256,
@@ -65,18 +67,20 @@ def generate_responses(prompt, n):
         pad_token_id=gen_tokenizer.eos_token_id,
     )
     return [
-        gen_tokenizer.decode(output_tokens[i], skip_special_tokens=True)
+        gen_tokenizer.decode(output_tokens[i][prompt_len:], skip_special_tokens=True)
         for i in range(n)
     ]
 
 
-def score_response(prompt, response):
-    text = prompt + response
-    inputs = rm_tokenizer(text, return_tensors="pt", truncation=True, max_length=512)
+def score_responses(prompt, responses):
+    texts = [prompt + response for response in responses]
+    inputs = rm_tokenizer(
+        texts, return_tensors="pt", truncation=True, max_length=512, padding=True
+    )
     inputs = {k: v.to(rm_model.device) for k, v in inputs.items()}
     with torch.no_grad():
         output = rm_model(**inputs)
-    return output.logits.squeeze().item()
+    return output.logits.squeeze(-1).tolist()
 
 
 # Main loop
@@ -85,19 +89,14 @@ for n in args.n_values:
     print(f"Running N={n}...")
     result_n = []
     for i, prompt in enumerate(prompts):
-        max_score = -float("inf")
-        best = {}
         responses = generate_responses(prompt, n)
-        for response in responses:
-            score = score_response(prompt, response)
-            if score > max_score:
-                max_score = score
-                best = {
-                    "prompt": prompt,
-                    "response": response,
-                    "rm_score": score,
-                }
-        result_n.append(best)
+        scores = score_responses(prompt, responses)
+        best_idx = max(range(n), key=lambda j: scores[j])
+        result_n.append({
+            "prompt": prompt,
+            "response": responses[best_idx],
+            "rm_score": scores[best_idx],
+        })
         if (i + 1) % 10 == 0:
             print(f"  {i + 1}/{len(prompts)} prompts done")
     results[n] = result_n
