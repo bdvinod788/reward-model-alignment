@@ -15,18 +15,23 @@ See 'scripts/setup.sh'
 
 ## Results
 
-### Baseline (HH-RLHF, Gemma-2B-it)
-- RewardBench overall: 66.4%
-- Strong safety alignment: refusals-offensive 100%, xstest-should-refuse 96.8%
-- Weakness: over-refusal on safe-but-sensitive prompts (xstest-should-respond 52.4%)
+All three variants trained via `src/train_ablation.py` on a unified chat-template
++ left-truncation pipeline (an earlier inconsistent-format pipeline produced
+below-chance accuracy on two of three runs).
+
+### RewardBench overall accuracy
+- HH-RLHF: 70.4%
+- UltraFeedback: 70.1%
+- Mixed (HH + UltraFeedback): **72.5%** (best of the three)
 
 ### Data ablation findings
-- UltraFeedback alone: 40.3% overall - safety alignment collapsed completely
-  (refusals-dangerous: 62% -> 3%, refusals-offensive: 100% -> 21%)
-- Mixed (HH + UltraFeedback): 47.3% overall - safety did not recover despite
-  HH-RLHF being present in training data
-- Key finding: dataset mixing does not average capabilities - UltraFeedback's
-  signal interferes with HH-RLHF's safety alignment
+- Mixing datasets improved overall accuracy and safety-refusal performance
+  rather than degrading it - the mixed model leads on `refusals-dangerous`
+  (67%, vs. 55% HH-alone and 8% UF-alone).
+- UltraFeedback alone stays weak on refusal-specific categories even on the
+  fixed pipeline (`refusals-dangerous` 8%, `xstest-should-refuse` 47%) - likely
+  a genuine property of that dataset (no red-team/harmlessness data), not a
+  pipeline artifact.
 
 ### Pending
 - Reward model calibration analysis (ECE, reliability diagrams)
