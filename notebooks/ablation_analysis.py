@@ -36,8 +36,7 @@ CHANCE = 0.5
 
 
 def load_latest(result_dir):
-    """Newest result JSON in the directory, so re-runs don't need path edits."""
-    paths = glob.glob(os.path.join(result_dir, '*.json'))
+    paths = glob.glob(os.path.join(result_dir, '**', '*.json'), recursive=True)
     if not paths:
         raise FileNotFoundError(
             f"No results in {result_dir} - run: sbatch --export=DATASET=... scripts/eval.job"
