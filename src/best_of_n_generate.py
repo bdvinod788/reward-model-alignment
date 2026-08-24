@@ -66,10 +66,11 @@ def generate_responses(prompt, n):
         num_return_sequences=n,
         pad_token_id=gen_tokenizer.eos_token_id,
     )
-    return [
+    responses = [
         gen_tokenizer.decode(output_tokens[i][prompt_len:], skip_special_tokens=True)
         for i in range(n)
     ]
+    return [response.split("\n\nHuman:")[0] for response in responses]
 
 
 def score_responses(prompt, responses):
