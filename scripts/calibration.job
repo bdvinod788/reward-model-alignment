@@ -24,7 +24,7 @@ export RM_PROJECT=/scratch1/bandrede/reward-model
 DATASET=${DATASET:?Set DATASET to one of: hh, ultrafeedback, mixed (e.g. sbatch --export=DATASET=mixed calibration.job)}
 
 CKPT_DIR=$RM_PROJECT/checkpoint_${DATASET}
-LATEST=$(ls -d $CKPT_DIR/checkpoint-* 2>/dev/null | sort -V | tail -1)
+LATEST=$(find $CKPT_DIR -maxdepth 1 -type d -name "checkpoint-*" 2>/dev/null | sort -V | tail -1)
 echo "Calibrating checkpoint: $LATEST"
 
 python src/calibration_analysis.py \

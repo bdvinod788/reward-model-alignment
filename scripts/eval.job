@@ -26,7 +26,7 @@ DATASET=${DATASET:?Set DATASET to one of: hh, ultrafeedback, mixed (e.g. sbatch 
 CKPT_DIR=$RM_PROJECT/checkpoint_${DATASET}
 
 # Find latest checkpoint automatically
-LATEST=$(ls -d $CKPT_DIR/checkpoint-* 2>/dev/null | sort -V | tail -1)
+LATEST=$(find $CKPT_DIR -maxdepth 1 -type d -name "checkpoint-*" 2>/dev/null | sort -V | tail -1)
 echo "Evaluating checkpoint: $LATEST"
 
 rewardbench \

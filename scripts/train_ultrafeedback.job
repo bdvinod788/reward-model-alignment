@@ -24,7 +24,7 @@ export RM_PROJECT=/scratch1/bandrede/reward-model
 cd $RM_PROJECT
 echo "Output dir: $RM_PROJECT/checkpoint"
 
-LATEST=$(ls -d $RM_PROJECT/checkpoint_ultrafeedback/checkpoint-* 2>/dev/null | sort -V | tail -1)
+LATEST=$(find $RM_PROJECT/checkpoint_ultrafeedback -maxdepth 1 -type d -name "checkpoint-*" 2>/dev/null | sort -V | tail -1)
 if [ -z "$LATEST" ]; then
     echo "Starting from scratch"
     /scratch1/bandrede/envs/reward-model/bin/python src/train_ablation.py --output $RM_PROJECT/checkpoint --dataset ultrafeedback
